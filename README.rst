@@ -19,3 +19,10 @@ OTHER DEPENDENCIES
 
 * EventSource: https://github.com/remy/polyfills/blob/master/EventSource.js
 
+COMMENTS
+========
+
+* I have used flask-gae-template_ to generate a blank project.
+
+.. _flask-gae-template https://github.com/utahta/flask-gae-template
+
