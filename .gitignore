@@ -1,1 +1,3 @@
 *.pyc
+src/pushurl/settings.py
+
