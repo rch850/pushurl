@@ -1,7 +1,6 @@
 from pushurl import app
 from flask import (render_template, request, url_for, make_response, redirect)
-
-urls = {}
+from models import Page
 
 @app.route('/')
 def hello_world():
@@ -14,8 +13,9 @@ def page(page_id):
 @app.route('/<int:page_id>/event')
 def event(page_id):
     s = ''
-    if page_id in urls:
-        s = 'data: %s\r\n\r\n' % urls[page_id]
+    page = Page.get_by_key_name(str(page_id))
+    if page:
+        s = 'data: %s\r\n\r\n' % page.url
     resp = make_response(s)
     resp.headers['Content-Type'] = 'text/event-stream'
     return resp
@@ -23,10 +23,14 @@ def event(page_id):
 @app.route('/<int:page_id>/manage', methods=['GET', 'POST'])
 def manage(page_id):
     if request.method == 'POST':
-        urls[page_id] = request.form['url']
+        Page.get_or_insert(str(page_id), url=request.form['url'])
         return redirect(url_for('manage', page_id=page_id))
     else:
+        url = ''
+        page = Page.get_by_key_name(str(page_id))
+        if page:
+            url = page.url
         return render_template('manage.html',
                                page_id=page_id,
-                               url=urls.get(page_id, ''))
+                               url=url)
 
