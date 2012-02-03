@@ -22,12 +22,18 @@ def event(page_id):
 
 @app.route('/<int:page_id>/manage', methods=['GET', 'POST'])
 def manage(page_id):
+    page = Page.get_by_key_name(str(page_id))
     if request.method == 'POST':
-        Page.get_or_insert(str(page_id), url=request.form['url'])
+        url = request.form['url']
+        if url.startswith('http://') or url.startswith('https://'):
+            if page:
+                page.url = url
+            else:
+                page = Page(key_name=str(page_id), url=url)
+            page.put()
         return redirect(url_for('manage', page_id=page_id))
     else:
         url = ''
-        page = Page.get_by_key_name(str(page_id))
         if page:
             url = page.url
         return render_template('manage.html',
